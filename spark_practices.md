@@ -40,7 +40,11 @@
 
 ---
 
-## Spark Scala API
+## Spark RDDs
+
+// 分析 RDDs 操作带来的业务实现可行性
+
+## Spark Scala API 开发新的业务
 
 **根据订单列表查找总消费金额大于 1000 的人群**
 
@@ -63,7 +67,7 @@ res1: Array[(String, Double)] = Array((spring3_3,1242.3), (hby_001,2664.74), (�
 
 ---
 
-## Spark SQL
+## Spark SQL 兼容老的逻辑 - 逐步替换
 
 **单次购买金额大于 1000 的用户群**
 
