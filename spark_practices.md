@@ -12,6 +12,7 @@
 
 ## 主动营销
 
+![](https://raw.githubusercontent.com/aiyanbo/scala-meetup-2014-11-16/master/images/ccms-nodes.png)
 <!-- 精准筛选用户 -> 确定营销内容 -> 选择营销渠道 -> 选择营销时间并执行 -> 获得响应数据 -> 生成效果报告 -->
 
 ---
@@ -73,6 +74,10 @@ res1: Array[(String, Double)] = Array((spring3_3,1242.3), (hby_001,2664.74), (�
 
 ---
 
+![](https://raw.githubusercontent.com/aiyanbo/databricks-spark-knowledge-base-zh-cn/master/images/reduce_by.png)
+
+---
+
 ## Spark SQL
 
 **单次购买金额大于 1000 的用户群**
@@ -97,12 +102,6 @@ query.distinct.collect()
 14/11/12 16:22:02 INFO SparkContext: Job finished: collect at SparkPlan.scala:85, took 79.037251155 s
 res1: Array[org.apache.spark.sql.Row] = Array([louis_js,1161.0], [michelle505505,1386.0], [comic001,5000.0], [acteve,1880.0], [毓儿爱鱼儿,1026.0], [finalhardis,1429.0], [korinadaddy,8812.0], [拂水作画,5900.0], [璀璨精品日货行,3265.5], [如意算盘2020,5900.0], [惠娜个个,2036.8], [拂水作画,5900.0], [惠娜个个,2036.8], [grantsherman,1128.6], [怕瓦落地釜山,1271.5], [ahuangmao520,1350.0], [爱上小黑瓶,1980.0], [fengxinzi215,1080.0], [daniel661818舒,1249.7], [毓儿爱鱼儿,1458.0], [毓儿爱鱼儿,1400.0], [毓儿爱鱼儿,1361.0], [beiqingduzou,1450.0], [cat9,1075.0], [我有我的lx,1298.0], [恶魔寻宝,1030.75], [angelafr,1152.36], [happy豆子,1065.9], [alexqxj,1080.0], [tb0396565,1148.5], [jojo_boboz,1330.0], [吴家鼎,4995.0], [tb8559779,1102.95], [shenhuaming,1200.0], [songwei880521,1136.0], [zhengxuhong01974,1138.1], [小三北北,1119.2], [sjj_9601,1040.0], [我爱我家1357900,1119.3], [duanwu0...
 ```
-
----
-
-## reduceByKey
-
-![]()
 
 ---
 
