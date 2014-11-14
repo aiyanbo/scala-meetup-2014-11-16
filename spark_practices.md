@@ -37,12 +37,36 @@
 - MEM: 96G * 80%
 - WORKs: 1
 - DATA: 18G
+- FILES: 1010
 
 ---
 
 ## Spark RDDs
 
-// 分析 RDDs 操作带来的业务实现可行性
+### Transformations
+
+从已有的 Dataset 创建一个新的 Dataset，Lazy 计算模式
+
+- map
+- filter
+- sample
+- union
+- groupByKey
+- reducyeByKey
+- ...
+
+### Actions
+
+从 Dataset 经过计算之后返回值
+
+- reduce
+- collect
+- count
+- first
+- table
+- save
+
+---
 
 ## Spark Scala API 开发新的业务
 
@@ -69,7 +93,7 @@ res1: Array[(String, Double)] = Array((spring3_3,1242.3), (hby_001,2664.74), (�
 
 ## Spark SQL 兼容老的逻辑 - 逐步替换
 
-**单次购买金额大于 1000 的用户群**
+**根据订单列表查找总消费金额大于 1000 的人群**
 
 ```scala
 val sqlContext = new org.apache.spark.sql.SQLContext(sc)
@@ -77,19 +101,19 @@ import sqlContext._
 
 case class Trade(buyer: String, payment: Double)
 
-val trade = sc.textFile("hdfs://.../trades/")
-              .map(_.split('\001')).map(t => Trade(t(6), t(16).trim.toDouble))
+val trade = sc.textFile("hdfs://.../trades/").map(_.split('\001')).map(t => Trade(t(6), t(16).trim.toDouble))
+
 trade.registerTempTable("trade")
 
-val query = sql("SELECT * FROM trade WHERE payment > 1000")
+val query = sql("SELECT buyer, SUM(payment) FROM trade GROUP BY buyer HAVING SUM(payment) > 1000")
 
-query.distinct.collect()
-
-```
+query.collect()
 
 ```
-14/11/12 16:22:02 INFO SparkContext: Job finished: collect at SparkPlan.scala:85, took 79.037251155 s
-res1: Array[org.apache.spark.sql.Row] = Array([louis_js,1161.0], [michelle505505,1386.0], [comic001,5000.0], [acteve,1880.0], [毓儿爱鱼儿,1026.0], [finalhardis,1429.0], [korinadaddy,8812.0], [拂水作画,5900.0], [璀璨精品日货行,3265.5], [如意算盘2020,5900.0], [惠娜个个,2036.8], [拂水作画,5900.0], [惠娜个个,2036.8], [grantsherman,1128.6], [怕瓦落地釜山,1271.5], [ahuangmao520,1350.0], [爱上小黑瓶,1980.0], [fengxinzi215,1080.0], [daniel661818舒,1249.7], [毓儿爱鱼儿,1458.0], [毓儿爱鱼儿,1400.0], [毓儿爱鱼儿,1361.0], [beiqingduzou,1450.0], [cat9,1075.0], [我有我的lx,1298.0], [恶魔寻宝,1030.75], [angelafr,1152.36], [happy豆子,1065.9], [alexqxj,1080.0], [tb0396565,1148.5], [jojo_boboz,1330.0], [吴家鼎,4995.0], [tb8559779,1102.95], [shenhuaming,1200.0], [songwei880521,1136.0], [zhengxuhong01974,1138.1], [小三北北,1119.2], [sjj_9601,1040.0], [我爱我家1357900,1119.3], [duanwu0...
+
+```
+14/11/14 15:29:34 INFO SparkContext: Job finished: collect at SparkPlan.scala:85, took 139.138759696 s
+res2: Array[org.apache.spark.sql.Row] = Array([shiyan0926,8854.139981689454], [轻轻的来了_001,1136.99], [westwood1213,1797.3], [christy800429,1162.1000000000001], [changshengwang_2009,1439.0], [gy0533,1321.0], [挂挂678,1513.26], [zhangshuo310,1173.4], [liuyang6606,1608.100006103516], [zh1989523,3178.6299999999997], [eleven447643,1471.8], [kkpsworld,1246.0], [jcx000822,1003.21], [svfie,1521.6900019073487], [流水红叶11,3631.570005493165], [shihong7002,1608.0], [mi琪小姐,1036.7], [去去小妖,3151.700047302241], [ljzzq2468,3737.91], [kisswhjk120,1848.34], [tb0585777,2292.8099999999995], [李佩珊00361,1972.4199999999998], [香香八戒,1080.85], [bin325,3303.839997329712], [10ve小又,1039.04], [jasmine芳芳,11246.14999206543], [wanghuining12345678910,2099.5], [tb806888_22,1952.15], [qphd2006,9927.059993782046], [rongxiaosun,1510...
 ```
 
 ---
@@ -103,28 +127,37 @@ SQL --mapping--> SchemaRDD
 **.toString** : SchemaRDD 的结构
 
 ```
-SchemaRDD[8] at RDD at SchemaRDD.scala:103
+query: org.apache.spark.sql.SchemaRDD = 
+SchemaRDD[15] at RDD at SchemaRDD.scala:103
 == Query Plan ==
 == Physical Plan ==
-Filter (payment#1 > 1000.0)
- ExistingRdd [buyer#0,payment#1], MapPartitionsRDD[6] at mapPartitions at basicOperators.scala:208
+Project [buyer#0,c1#14]
+ Filter havingCondition#15
+  Aggregate false, [buyer#0], [(SUM(PartialSum#18) > 1000.0) AS havingCondition#15,buyer#0,SUM(PartialSum#19) AS c1#14]
+   Exchange (HashPartitioning [buyer#0], 200)
+    Aggregate true, [buyer#0], [buyer#0,SUM(payment#1) AS PartialSum#18,SUM(payment#1) AS PartialSum#19]
+     ExistingRdd [buyer#0,payment#1], MapPartitionsRDD[4] at mapPartitions at basicOperators.scala:208
 ```
 
 **.queryExecution** : Query 执行计划
 
 ```
 scala> query.queryExecution.analyzed
-res12: org.apache.spark.sql.catalyst.plans.logical.LogicalPlan = 
-Project [buyer#0,payment#1]
- Filter (payment#1 > CAST(1000, DoubleType))
-  SparkLogicalPlan (ExistingRdd [buyer#0,payment#1], MapPartitionsRDD[6] at mapPartitions at basicOperators.scala:208)
+res4: org.apache.spark.sql.catalyst.plans.logical.LogicalPlan = 
+Project [buyer#0,c1#14]
+ Filter havingCondition#15
+  Aggregate [buyer#0], [(SUM(payment#1) > CAST(1000, DoubleType)) AS havingCondition#15,buyer#0,SUM(payment#1) AS c1#14]
+   SparkLogicalPlan (ExistingRdd [buyer#0,payment#1], MapPartitionsRDD[4] at mapPartitions at basicOperators.scala:208)
 ```
 
 ```
 scala> query.queryExecution.sparkPlan
-res13: org.apache.spark.sql.execution.SparkPlan = 
-Filter (payment#1 > 1000.0)
- ExistingRdd [buyer#0,payment#1], MapPartitionsRDD[6] at mapPartitions at basicOperators.scala:208
+res5: org.apache.spark.sql.execution.SparkPlan = 
+Project [buyer#0,c1#14]
+ Filter havingCondition#15
+  Aggregate false, [buyer#0], [(SUM(PartialSum#18) > 1000.0) AS havingCondition#15,buyer#0,SUM(PartialSum#19) AS c1#14]
+   Aggregate true, [buyer#0], [buyer#0,SUM(payment#1) AS PartialSum#18,SUM(payment#1) AS PartialSum#19]
+    ExistingRdd [buyer#0,payment#1], MapPartitionsRDD[4] at mapPartitions at basicOperators.scala:208
 ```
 
 ---
