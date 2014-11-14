@@ -43,26 +43,20 @@
 
 ## Spark RDDs
 
-### Transformations
-
-从已有的 Dataset 创建一个新的 Dataset，Lazy 计算模式
+### Transformations: 从已有的 Dataset 创建一个新的 Dataset，Lazy 计算模式
 
 - map
 - filter
 - sample
-- union
 - groupByKey
 - reducyeByKey
 - ...
 
-### Actions
-
-从 Dataset 经过计算之后返回值
+### Actions: 从 Dataset 计算之后返回值
 
 - reduce
 - collect
 - count
-- first
 - saveAsTextFile
 - ...
 
