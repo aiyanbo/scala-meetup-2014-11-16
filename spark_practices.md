@@ -66,6 +66,11 @@
 - table
 - save
 
+### Persistence
+
+- persist
+- cache
+
 ---
 
 ## Spark Scala API 开发新的业务
@@ -74,14 +79,14 @@
 
 ```scala
 val trades = sc.textFile("hdfs://.../trades/")
-trades.map(_.split('\001')).cache().map(trade => trade(6) -> trade(16).trim.toDouble)
+trades.map(_.split('\001')).map(trade => trade(6) -> trade(16).trim.toDouble)
       .reduceByKey(_ + _)
       .filter( e => e._2 > 1000)
       .collect()
 ```
 
 ```
-14/11/12 11:47:44 INFO SparkContext: Job finished: collect at <console>:17, took 482.544253647 s
+14/11/14 15:49:13 INFO SparkContext: Job finished: collect at <console>:13, took 318.286095399 s
 res1: Array[(String, Double)] = Array((spring3_3,1242.3), (hby_001,2664.74), (海之韵秀,1067.6), (cccdasheng,1087.5), (hzsandygu,1580.0), (ciciflp,1338.5), (mch311,1203.03), (ttx2002,1569.23), (白雪1984529,1985.8700000000001), (sally5535,1037.0), (炙焰魅焱,1395.94), (gechenchen198738,1586.38), (lbxstudy,1086.7800000000002), (lih671120,1126.96), (我的手机1198,1856.36), (yaoweixuan1985,2586.53), (q_dan822,1853.260003051758), (youyou_jsy,1440.4400122070322), (魅影馨光,1398.459996948242), (tinnaran,1410.24), (会飞的鱼27101890_68,2487.7400007629394), (喜兔兔99,3431.8600000000006), (安伟娜1,1931.59), (颖颖104,1439.4999938964838), (zhangalbion,1688.7199999999998), (juanjuan12314,6695.389999999999), (嘉禾081210,1969.4199999999998), (freeblue88,1346.7200012207031), (vaniabobo0918,1757.99), (allen201882,1921.74), (shaoqihui77,13...
 ```
 
