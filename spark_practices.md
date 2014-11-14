@@ -63,8 +63,8 @@
 - collect
 - count
 - first
-- table
-- save
+- saveAsTextFile
+- ...
 
 ### Persistence
 
@@ -93,6 +93,8 @@ res1: Array[(String, Double)] = Array((spring3_3,1242.3), (hby_001,2664.74), (�
 ---
 
 ![](https://raw.githubusercontent.com/aiyanbo/databricks-spark-knowledge-base-zh-cn/master/images/reduce_by.png)
+
+[图片来源](http://databricks.gitbooks.io/databricks-spark-knowledge-base/content/best_practices/prefer_reducebykey_over_groupbykey.html)
 
 ---
 
