@@ -65,7 +65,7 @@
 - reducyeByKey
 - ...
 
-### Actions: 从 Dataset 计算之后返回值
+### Actions: 从 Dataset 计算之后返回值到驱动程序
 
 - reduce
 - collect
